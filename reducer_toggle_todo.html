@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2017 by ammartinwala52 (http://jsbin.com/qabiyom/17/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script src="https://wzrd.in/standalone/expect@latest"></script>
+  <script src="https://wzrd.in/standalone/deep-freeze@latest"></script>
+</head>
+<body>
+
+<script id="jsbin-javascript">
+const todos = (state = [], action) => {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [
+        ...state,
+        {
+          id: action.id,
+          text: action.text,
+          completed: false
+        }
+      ];
+    case 'TOGGLE_TODO':
+      return state.map(todo => {
+        if(todo.id !== action.id){
+          return todo;
+        }
+        return {
+          ...todo,
+          completed: !todo.completed
+        };
+      });
+    default:
+      return state;
+  }
+};
+
+const testToggleTodo = () => {
+  const stateBefore = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      completed: false
+  },
+  {
+    id: 1,
+    text: 'Go shopping',
+    completed: false
+  }
+  ];
+  
+  const action = {
+    id:1,
+    type: 'TOGGLE_TODO'
+  };
+  
+  const stateAfter = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      completed: false
+  },
+  {
+    id: 1,
+    text: 'Go shopping',
+    completed: true
+  }
+  ];
+  
+  deepFreeze(stateBefore);
+  deepFreeze(stateAfter);
+  
+  expect(
+    todos(stateBefore, action)
+  ).toEqual(stateAfter);
+  
+}
+
+testToggleTodo();
+console.log('Test passed');
+</script>
+</body>
+</html>

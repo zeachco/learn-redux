@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2017 by anonymous (http://jsbin.com/fupivijuca/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script src="https://wzrd.in/standalone/expect@latest"></script>
+<script src="https://wzrd.in/standalone/deep-freeze@latest"></script>
+  
+</head>
+<body>
+
+<script id="jsbin-javascript">
+const addCounter = (list) => {
+  return [...list, 0];
+}
+
+const testAddCounter = () => {
+  let listBefore = [];
+  let listAfter = [0];
+  
+  deepFreeze(listBefore);
+  
+  expect(
+    addCounter(listBefore)
+  ).toEqual(listAfter);
+}
+
+testAddCounter();
+
+
+const removeCounter = (list , index) => {
+  let ar1 = list.slice(0, index);
+  let ar2 = list.slice(index + 1);
+  return [...ar1, ...ar2];
+}
+
+
+const testRemoveCounter = () => {
+  let listBefore = [0, 10 , 20];
+  let listAfter = [0, 20];
+  
+  deepFreeze(listBefore);
+  
+  expect(
+    removeCounter(listBefore,1)
+  ).toEqual(listAfter);
+  
+testRemoveCounter();
+console.log('Test passedddd');
+</script>
+</body>
+</html>
