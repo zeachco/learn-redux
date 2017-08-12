@@ -1,23 +1,9 @@
 import React, { Component } from 'react';
-import { createStore } from 'redux';
-import { todoApp } from './todos';
+
+import { connect } from 'react-redux';
 
 let nextTodoId = 0;
-const store = createStore(todoApp);
-const TodoApp = () => {
-    return (
-        <div>
-            <AddTodo />
-
-            <VisibleTodoList />
-
-            <Footer />
-
-        </div>
-    )
-}
-
-const AddTodo = () => {
+let AddTodo = ({ dispatch }) => {
     let input;
     return (
         <div>
@@ -25,7 +11,7 @@ const AddTodo = () => {
                 input = node;
             }} />
             <button onClick={() => {
-                store.dispatch({
+                dispatch({
                     id: ++nextTodoId,
                     text: input.value,
                     type: 'ADD_TODO'
@@ -37,40 +23,17 @@ const AddTodo = () => {
         </div>
     )
 }
-
-
-class VisibleTodoList extends Component {
-    componentDidMount() {
-        this.unsubscribe = store.subscribe(() =>
-            this.forceUpdate() //React method that updates the state of the component.
-        );
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    render() {
-        const props = this.props;
-        const state = store.getState();
-        return (
-            <TodoList todos={getVisibleTodos(state.todos, state.visibilityFilter)} onTodoClick={id =>
-                store.dispatch({
-                    type: 'TOGGLE_TODO',
-                    id
-                })} />
-        )
-    }
-}
+// If we call connect method without any arguments it will pass dispatch as a prop to the component it is being called
+AddTodo = connect()(AddTodo);
 
 const Footer = () => {
     return (
         <p>
             Show:
             {' '}
-            <FilterLink filter='SHOW_ALL' >All</FilterLink>
+            <FilterLink filter='SHOW_ALL'>All</FilterLink>
             {' '}
-            <FilterLink filter='SHOW_ACTIVE' > Active</FilterLink>
+            <FilterLink filter='SHOW_ACTIVE'> Active</FilterLink>
             {' '}
             <FilterLink filter='SHOW_COMPLETED'>Completed</FilterLink>
         </p>
@@ -78,7 +41,9 @@ const Footer = () => {
 }
 
 class FilterLink extends Component {
+
     componentDidMount() {
+        const { store } = this.context;
         this.unsubscribe = store.subscribe(() =>
             this.forceUpdate() //React method that updates the state of the component.
         );
@@ -89,6 +54,7 @@ class FilterLink extends Component {
     }
     render() {
         const props = this.props;
+        const { store } = this.context;
         const state = store.getState();
         return (
             <Link active={props.filter === state.visibilityFilter}
@@ -104,7 +70,37 @@ class FilterLink extends Component {
         )
     }
 }
+FilterLink.contextTypes = {
+    store: React.PropTypes.object
+}
 
+// const mapStateToLinkProps = (state, ownProps) => {
+//     return {
+//         active: ownProps.filter === state.visibilityFilter
+//     }
+// };
+
+// const mapDispatchToLinkProps = (dispatch, ownProps) => {
+//     return {
+//         onClick: () => {
+//             dispatch({
+//                 type: 'SET_VISIBILITY_FILTER',
+//                 filter: ownProps.filter
+//             })
+//         }
+//     }
+// };
+
+// const FilterLink = connect(
+//     mapStateToLinkProps,
+//     mapDispatchToLinkProps
+// )(Link);
+
+
+// const FilterLink = connect(
+//   mapStateToLinkProps,
+//   mapDispatchToLinkProps
+// )(Link);
 
 const Todo = ({
     onClick,
@@ -152,4 +148,41 @@ const getVisibleTodos = (todos, filter) => {
             return todos.filter(t => !t.completed);
     }
 }
+
+const TodoApp = () => {
+    return (
+        <div>
+            <AddTodo />
+
+            <VisibleTodoList />
+
+            <Footer />
+
+        </div>
+    )
+}
+
+
+// Rewriting the components using connect from 'react-redux' method.
+const mapStateToDoListProps = (state) => {
+    return {
+        todos: getVisibleTodos(state.todos, state.visibilityFilter)
+    };
+};
+const mapDispatchToDoListProps = (dispatch) => {
+    return {
+        onTodoClick: (id) => {
+            dispatch({
+                type: 'TOGGLE_TODO',
+                id
+            })
+        }
+    }
+};
+const VisibleTodoList = connect(
+    mapStateToDoListProps,
+    mapDispatchToDoListProps
+)(TodoList)
+
+
 export default TodoApp;
