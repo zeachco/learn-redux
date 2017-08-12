@@ -126,38 +126,38 @@ FilterLink.contextTypes = {
     store: React.PropTypes.object
 }
 
-// const mapStateToLinkProps = (state, ownProps) => {
-//     return {
-//         active: ownProps.filter === state.visibilityFilter
-//     }
-// };
+const mapStateToLinkProps = (state, ownProps) => {
+    return {
+        active: ownProps.filter === state.visibilityFilter
+    }
+};
 
-// const mapDispatchToLinkProps = (dispatch, ownProps) => {
-//     return {
-//         onClick: () => {
-//             dispatch({
-//                 type: 'SET_VISIBILITY_FILTER',
-//                 filter: ownProps.filter
-//             })
-//         }
-//     }
-// };
+const mapDispatchToLinkProps = (dispatch, ownProps) => {
+    return {
+        onClick: () => {
+            dispatch({
+                type: 'SET_VISIBILITY_FILTER',
+                filter: ownProps.filter
+            })
+        }
+    }
+};
 
-// const FilterLink = connect(
-//     mapStateToLinkProps,
-//     mapDispatchToLinkProps
-// )(Link);
+const ConnectedFilterLink = connect(
+    mapStateToLinkProps,
+    mapDispatchToLinkProps
+)(FilterLink);
 
 const Footer = () => {
     return (
         <p>
             Show:
             {' '}
-            <FilterLink filter='SHOW_ALL'>All</FilterLink>
+            <ConnectedFilterLink filter='SHOW_ALL'>All</ConnectedFilterLink>
             {' '}
-            <FilterLink filter='SHOW_ACTIVE'> Active</FilterLink>
+            <ConnectedFilterLink filter='SHOW_ACTIVE'> Active</ConnectedFilterLink>
             {' '}
-            <FilterLink filter='SHOW_COMPLETED'>Completed</FilterLink>
+            <ConnectedFilterLink filter='SHOW_COMPLETED'>Completed</ConnectedFilterLink>
         </p>
     )
 }
